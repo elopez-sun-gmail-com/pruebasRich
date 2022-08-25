@@ -1,0 +1,139 @@
+﻿
+@using RUV.RUVPP.UI.Comun.Helpers
+@model RUV.RUVPP.Negocio.Empresa.Reglas.DroCobertura
+
+@{
+    string saveAction = ViewBag.EstaEnActualizacion ? "Actualizar" : "Guardar";
+}
+
+
+@using (Ajax.BeginForm("ValidarModelo", "CoberturaDRO", null, null, new { enctype = "multipart/form-data", @class = "form-horizontal fv-form fv-form-bootstrap", role = "form", id = "formCoberturaDRO" }))
+{
+    @Html.HiddenFor(model => model.idEntidad, new { Value = Model != null ? Model.idEntidad : 0 })
+    @Html.HiddenFor(model => model.idEntidadesAsociadas, new { Value = Model != null ? Model.idEntidadesAsociadas : "" })
+    @Html.HiddenFor(model => model.idRegimenFiscal, new { Value = Model != null ? Model.idRegimenFiscal : 0 })
+    @Html.HiddenFor(model => model.IdContenedor, new { Value = Model != null ? Model.IdContenedor : 0 })
+    @Html.HiddenFor(model => model.IdRegistro, new { Value = Model != null ? Model.IdRegistro : 0 })
+    @Html.HiddenFor(model => model.idEmpresa, new { Value = Model != null ? Model.idEmpresa : 0 })
+    @Html.HiddenFor(model => model.IdEstatusEmpresa, new { Value = Model != null ? Model.IdEstatusEmpresa : 0 })
+
+    <div class="row alturamaxformalista">
+
+        <div class="col-sm-12">
+
+            <div class="col-sm-12 m-form">
+                <div class="rowContainer inputContainer has-feedback">
+                    <div class="col-sm-3"><label for="" class="control-label">Institución que lo acredita como DRO</label></div>
+                    <div class="col-sm-8">
+                        @Html.EditorFor(model => model.Institucion, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Institucion, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-sm-1"></div>
+            </div>
+
+
+            <div class="col-sm-12 m-form">
+                <div class="rowContainer inputContainer has-feedback">
+                    <div class="col-sm-3"><label for="" class="control-label">Entidad acreditada como DRO/PRO</label></div>
+                    <div class="col-sm-8">
+                        @Html.EditorFor(model => model.Entidad, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Entidad, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-sm-1"></div>
+            </div>
+
+
+            <div class="col-sm-12 m-form">
+                <div class="rowContainer inputContainer has-feedback">
+                    <div class="col-sm-3"><label for="" class="control-label">Número de Registro de DRO</label></div>
+                    <div class="col-sm-8">
+                        @Html.EditorFor(model => model.RegistroDRO, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.RegistroDRO, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-sm-1"></div>
+            </div>
+
+            <div class="col-sm-12 m-form">
+                <div class="rowContainer inputContainer has-feedback">
+                    <div class="col-sm-3"><label for="" class="control-label">Fecha de vigencia como DRO/PRO</label></div>
+                    <div class="col-sm-8">
+
+                        <div class="input-group date" id="datetimepicker12">
+                            @Html.EditorFor(model => model.FechaVigenciaDRO, new { htmlAttributes = new { @class = "form-control", placeholder = "dd/mm/aaaa", @type = "text" } })
+                            <span class="input-group-addon">
+                                <span class="glyphicon-calendar glyphicon"></span>
+                            </span>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.FechaVigenciaDRO, "", new { @class = "text-danger" })
+
+                    </div>
+                </div>
+                <div class="col-sm-1"></div>
+            </div>
+
+            <div class="col-sm-12 m-form" id="doc_CarnetDRO">
+                <div class="rowContainer">
+                    <div class="col-sm-3"><label for="" class="control-label">Adjuntar Carnet vigente y con resello, que acredite al DRO/PRO <span class="color-rojo">*</span></label></div>
+                    <div class="col-sm-8">
+                        <div id="CarnetDRO" class="inputContainer">
+
+                        </div>
+                        @Html.ValidationMessageFor(model => model.CarnetDRO, "", new { @class = "small has-error" })
+                    </div>
+                </div>
+                <div class="col-sm-1"></div>
+            </div>
+
+            <div class="col-sm-12 m-form">
+                <div class="row">
+                    <div class="col-sm-3"></div>
+                    <div class="col-sm-8 color-rojo">
+                        &#160; <b>*</b> <small>El sistema admite archivos tipo pdf de máximo 5 Mb.</small>
+                    </div>
+                    <div class="col-sm-1"></div>
+                </div>
+            </div>
+        </div>
+        <!--termina panel izquierdo para campos-->
+        <!--</div>-->
+    </div>
+
+        <div class="row leido">
+            <input type="submit" class="btn btn-primary btn-grande-lista" id="btnAgregarCobertura" value="Agregar" />
+            <input type="button" class="btn btn-primary btn-grande-lista" id="btnCancelarCobertura" value="Cancelar" style="display: none;" />
+        </div>
+
+}
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        ruv.registro.coberturaDRO.variables.tabcontent = $('#tabCobertura');
+        ruv.registro.coberturaDRO.variables.url.guardarCambios = '@Url.Action(saveAction, "CoberturaDRO")';
+        ruv.registro.coberturaDRO.variables.url.actualizarCambios = '@Url.Action("Actualizar", "CoberturaDRO")';
+        ruv.registro.coberturaDRO.variables.url.Documento = '@Url.Action("CargarDocumento", "CoberturaDRO")';
+
+
+        if (@Html.Raw(ViewData["esPostBack"] == null).ToHtmlString().ToLower() == true)
+        {
+            ruv.registro.coberturaDRO.init();
+        }
+        //else {
+        //    ruv.registro.coberturaDRO.initGlobal();
+        //}
+
+        if (@Html.Raw(ViewData["esPostBack"] == null).ToHtmlString().ToLower() == true) {
+            ruv.registro.coberturaDRO.init();
+        }
+
+        //ruv.registro.coberturaDRO.initGlobal();
+
+    });
+</script>
+
+@Url.GetCdnScriptContent("~/bundles/customcontroles")
